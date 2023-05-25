@@ -1,0 +1,2 @@
+DROP DATABASE IF EXISTS dotBlog_db;
+CREATE DATABASE dotBlog_db;
