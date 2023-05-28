@@ -9,6 +9,6 @@ module.exports = {
       icon = '🟫';
     }
 
-    return `<span for="img" aria-label="book">${icon}</span>`;
+    return `<span for="img" aria-label="icon">${icon}</span>`;
   },
 };
