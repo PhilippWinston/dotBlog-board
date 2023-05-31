@@ -15,8 +15,10 @@ const signupFormHandler = async (event) => {
       });
   
       if (response.ok) {
+        debugger
         document.location.replace('/');
       } else {
+        debugger
         alert(response.statusText);
       }
     }

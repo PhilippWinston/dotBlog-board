@@ -12,15 +12,20 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-const hbs = exphbs.create({ helpers });
+// Create an instance of Handlebars with helpers
+const hbs = exphbs.create({
+  helpers: {
+    formatDate: helpers.formatDate
+  }
+});
 
 const sess = {
   secret: 'Super secret secret',
   cookie: {
     httpOnly: true,
-    secure: true,
     sameSite: true,
-    maxAge: 3600000},
+    maxAge: 3600000
+  },
   resave: false,
   saveUninitialized: true,
   store: new SequelizeStore({

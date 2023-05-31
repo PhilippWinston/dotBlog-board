@@ -1,15 +1,18 @@
 const router = require('express').Router();
 const sequelize = require('../config/connection');
 const {
-    User,
     Posts,
+    User,
     Comment
 } = require('../models');
+const withAuth = require('../utils/auth');
 
 
-router.get('/', (req, res) => {
-    debugger
+router.get('/', withAuth, (req, res) => {
     Posts.findAll({
+            where: {
+                user_id: req.session.user_id
+            },
             attributes: [
                 'id',
                 'title',
@@ -30,14 +33,13 @@ router.get('/', (req, res) => {
                 }
             ]
         })
-        .then(dbPostsData => {
-            const Posts = dbPostsData.map(Post => Post.get({
+        .then(dbPostData => {
+            const posts = dbPostData.map(post => post.get({
                 plain: true
             }));
-debugger
-            res.render('homepage', {
-                Posts,
-                loggedIn: req.session.logged_in
+            res.render('dashboard', {
+                posts,
+                loggedIn: true
             });
         })
         .catch(err => {
@@ -46,7 +48,7 @@ debugger
         });
 });
 
-router.get('/Posts/:id', (req, res) => {
+router.get('/edit/:id', withAuth, (req, res) => {
     Posts.findOne({
             where: {
                 id: req.params.id
@@ -71,52 +73,33 @@ router.get('/Posts/:id', (req, res) => {
                 }
             ]
         })
-        .then(dbPostsData => {
-            if (!dbPostsData) {
+        .then(dbPostData => {
+            if (!dbPostData) {
                 res.status(404).json({
-                    message: 'No Posts found with this id'
+                    message: 'No post found with this id'
                 });
                 return;
             }
 
-            const Posts = dbPostsData.get({
+            const post = dbPostData.get({
                 plain: true
             });
-console.log(Posts)
-            res.render('single-post', {
-                Posts,
-                loggedIn: req.session.loggedIn
+
+            res.render('edit-post', {
+                post,
+                loggedIn: true
             });
         })
         .catch(err => {
             console.log(err);
             res.status(500).json(err);
         });
-});
-
-router.get('/login', (req, res) => {
-    if (req.session.loggedIn) {
-        res.redirect('/');
-        return;
-    }
-
-    res.render('signup');
-});
-
-router.get('/signup', (req, res) => {
-    if (req.session.loggedIn) {
-        res.redirect('/');
-        return;
-    }
-
-    res.render('signup');
-});
-
-
-router.get('*', (req, res) => {
-    res.status(404).send("Can't go there!");
-    // res.redirect('/');
 })
 
+router.get('/new', (req, res) => {
+    res.render('add-post', {
+        loggedIn: true
+    })
+})
 
 module.exports = router;

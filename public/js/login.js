@@ -3,22 +3,34 @@
 const loginFormHandler = async (event) => {
     event.preventDefault();
   
-    const email = document.querySelector('#email-login').value.trim();
+    const username = document.querySelector('#username-login').value.trim();
     const password = document.querySelector('#password-login').value.trim();
   
-    if (email && password) {
+    if (username && password) {
+      
+      try {
+        
       
       const response = await fetch('/api/users/login', {
         method: 'POST',
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
         headers: { 'Content-Type': 'application/json' },
       });
-  
+  debugger  
       if (response.ok) {
-        // If successful, redirect the browser to the dashboard page
-        document.location.replace('/dashboard');
+        const res = await response.json()
+        debugger
+        alert(res.message);
+
+        document.location.replace('/');
       } else {
-        alert(response.statusText);
+        const res = await response.json()
+        console.log(JSON.stringify(response))
+        debugger
+        alert(res.message);
+      }} catch (error) {
+        console.log(JSON.stringify(error))
+        
       }
     }
   };
